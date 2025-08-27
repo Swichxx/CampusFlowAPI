@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apresentação - Solicitação de Localização</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: #333;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        header {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .intro-section {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #444;
+        }
+        
+        p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        
+        .content-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        
+        .text-content {
+            flex: 1;
+            min-width: 300px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .square-container {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .white-square {
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #888;
+            font-size: 1.2rem;
+        }
+        
+        footer {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        /* Modal de localização (pop-up) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .location-modal {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 450px;
+            padding: 30px;
+            text-align: center;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .location-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #6e8efb;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        #allow-btn {
+            background: #6e8efb;
+            color: white;
+        }
+        
+        #allow-btn:hover {
+            background: #5a7de4;
+            transform: translateY(-2px);
+        }
+        
+        #deny-btn {
+            background: #f8f9fa;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+        
+        #deny-btn:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+        
+        .permission-status {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .granted {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        
+        .denied {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateY(-30px) scale(0.95);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Minha Página de Apresentação</h1>
+    </header>
+    
+    <div class="container">
+        <section class="intro-section">
+            <h2>Bem-vindo à Nossa Apresentação</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor.</p>
+            <p>Phasellus gravida semper nisi. Nullam vel sem. Pellentesque libero tortor, tincidunt et, tincidunt eget, semper nec, quam. Sed hendrerit.</p>
+        </section>
+        
+        <div class="content-wrapper">
+            <div class="text-content">
+                <h2>Sobre Nós</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor.</p>
+                <p>Phasellus gravida semper nisi. Nullam vel sem. Pellentesque libero tortor, tincidunt et, tincidunt eget, semper nec, quam. Sed hendrerit.</p>
+                <p>Mauris turpis nunc, blandit et, volutpat molestie, porta ut, ligula. Fusce pharetra convallis urna. Quisque ut nisi. Donec mi odio, faucibus at, scelerisque quis, convallis in, nisi.</p>
+            </div>
+            
+            <div class="square-container">
+                <div class="white-square">
+                    Conteúdo do site será carregado aqui posteriormente
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-content" style="margin-top: 30px;">
+            <h2>Nossos Serviços</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor.</p>
+            <p>Phasellus gravida semper nisi. Nullam vel sem. Pellentesque libero tortor, tincidunt et, tincidunt eget, semper nec, quam. Sed hendrerit.</p>
+        </div>
+    </div>
+    
+    <footer>
+        Nosso site respeita sua privacidade. Sua localização não é compartilhada com terceiros.
+    </footer>
+
+    <!-- Modal de Localização (Pop-up) -->
+    <div class="modal-overlay" id="location-modal-overlay">
+        <div class="location-modal">
+            <div class="location-icon">📍</div>
+            <h1>Compartilhar localização</h1>
+            <p>Para proporcionar uma experiência personalizada, precisamos da sua permissão para acessar sua localização. Sua privacidade é importante para nós - usaremos esses dados apenas para melhorar seu uso do site.</p>
+
+            <div class="buttons">
+                <button id="deny-btn">Negar</button>
+                <button id="allow-btn">Permitir</button>
+            </div>
+
+            <div id="permission-status" class="permission-status"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const allowBtn = document.getElementById('allow-btn');
+            const denyBtn = document.getElementById('deny-btn');
+            const statusDiv = document.getElementById('permission-status');
+            const modalOverlay = document.getElementById('location-modal-overlay');
+            
+            // Mostrar o modal após um breve delay (simulando carregamento da página)
+            setTimeout(() => {
+                modalOverlay.classList.remove('hidden');
+            }, 1500);
+
+            // Função para detectar dispositivo
+            function detectarDispositivo() {
+                const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+                if (/windows phone/i.test(userAgent)) return "Windows Phone";
+                if (/android/i.test(userAgent)) return "Android";
+                if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) return "iOS";
+                if (/Win/.test(userAgent)) return "Windows";
+                if (/Mac/.test(userAgent)) return "MacOS";
+                if (/Linux/.test(userAgent)) return "Linux";
+
+                return "Desconhecido";
+            }
+
+            // Função para obter localização e enviar para a API
+            function sendLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            const latitude = position.coords.latitude;
+                            const longitude = position.coords.longitude;
+                            const timestamp = new Date().toISOString();
+                            const device = detectarDispositivo(); 
+
+                            statusDiv.textContent = "Localização permitida! Enviando para o servidor...";
+                            statusDiv.className = "permission-status granted";
+
+                            const data = {
+                                latitude: latitude,
+                                longitude: longitude,
+                                device: device, 
+                                timestamp: timestamp
+                            };
+
+                            // POST automático para a API
+                            fetch('http://localhost:8080/api/acessos/PostTeste', {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify(data)
+                            })
+                                .then(response => response.json())
+                                .then(json => {
+                                    statusDiv.textContent = `Localização enviada com sucesso! ID: ${json.id}`;
+                                    console.log(json);
+                                    
+                                    // Fechar o modal após 2 segundos
+                                    setTimeout(() => {
+                                        modalOverlay.classList.add('hidden');
+                                    }, 2000);
+                                })
+                                .catch(err => {
+                                    statusDiv.textContent = 'Erro ao enviar localização.';
+                                    console.error(err);
+                                });
+                        },
+                        function(error) {
+                            statusDiv.textContent = "Permissão negada ou erro ao obter localização.";
+                            statusDiv.className = "permission-status denied";
+                            
+                            // Fechar o modal após 2 segundos
+                            setTimeout(() => {
+                                modalOverlay.classList.add('hidden');
+                            }, 2000);
+                        }
+                    );
+                } else {
+                    statusDiv.textContent = "Geolocalização não é suportada por este navegador.";
+                    statusDiv.className = "permission-status denied";
+                    
+                    // Fechar o modal após 2 segundos
+                    setTimeout(() => {
+                        modalOverlay.classList.add('hidden');
+                    }, 2000);
+                }
+            }
+
+            // Event listeners para botões
+            allowBtn.addEventListener('click', sendLocation);
+
+            denyBtn.addEventListener('click', function() {
+                statusDiv.textContent = "Você negou o acesso à localização. Alguns recursos podem não funcionar.";
+                statusDiv.className = "permission-status denied";
+                
+                // Fechar o modal após 2 segundos
+                setTimeout(() => {
+                    modalOverlay.classList.add('hidden');
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
