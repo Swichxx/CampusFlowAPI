@@ -18,7 +18,7 @@ import java.util.List;
 public class AccessController {
     private final AccessService service;
 
-    @PostMapping("/PostTeste")
+    @PostMapping("/aPzXqM9vFtR3yLkD7sGwJhE2oUcBiZnV5TfHrQxYpNjSm")
     @ResponseStatus(HttpStatus.CREATED)
     public AccessResponseDTO create(@RequestBody @Valid AccessCreateDTO body){
         return service.create(body);
