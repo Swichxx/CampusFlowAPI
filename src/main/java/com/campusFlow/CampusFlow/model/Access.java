@@ -13,7 +13,6 @@ import java.time.Instant;
 public class Access {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
     @Column(nullable = false)
