@@ -33,4 +33,11 @@ public class AccessController {
     public List<HeatmapPointDTO> heatmap(){
         return service.heatmapPoints();
     }
+
+    @DeleteMapping("/delete-all")
+@ResponseStatus(HttpStatus.NO_CONTENT)
+public void deleteAll() {
+    repository.deleteAll();
+}
+
 }
